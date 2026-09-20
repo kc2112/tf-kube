@@ -1,4 +1,6 @@
-
+data "aws_eks_cluster" "this" {
+  name = aws_eks_cluster.this.name
+}
 
 locals {
   eks_service_role_arn = "arn:aws:iam::774552523771:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS"
@@ -64,6 +66,15 @@ resource "aws_vpc_security_group_ingress_rule" "nodes_from_alb" {
   security_group_id            = aws_security_group.nodes.id
   description                  = "ALB to pods on container port"
   referenced_security_group_id = var.alb_security_group_id   # pass in from ALB module output
+  from_port                    = var.container_port
+  to_port                      = var.container_port
+  ip_protocol                  = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "cluster_sg_from_alb" {
+  security_group_id            = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
+  description                  = "ALB to pods on container port"
+  referenced_security_group_id = var.alb_security_group_id
   from_port                    = var.container_port
   to_port                      = var.container_port
   ip_protocol                  = "tcp"

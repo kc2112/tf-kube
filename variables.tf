@@ -87,7 +87,7 @@ variable "app_port" {
 variable "container_port" {
   description = "Port the application container listens on"
   type        = number
-  default     = 8080   # set to whatever your app uses
+  default     = 80
 }
 
 variable "api_stage_name" {

@@ -48,5 +48,6 @@ output "authorizer_function_name" {
 }
 
 output "example_curl" {
+  sensitive = true
   value = "curl -sS -H 'Authorization: Bearer ${var.authorizer_token}' ${module.api_gateway.invoke_url}/"
 }

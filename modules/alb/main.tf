@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.14.0"
+    }
+  }
+}
+
+
 resource "aws_security_group" "this" {
   name        = "${var.name}-alb"
   description = "Internal ALB in front of EKS"
@@ -35,7 +48,7 @@ resource "aws_lb" "this" {
 
 # ✅ renamed from "nodes" to "this" — matches listener reference
 resource "aws_lb_target_group" "this" {
-  name        = "${var.name}-pods"
+  name        = "inaeks"
   port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -71,4 +84,20 @@ resource "aws_lb_listener" "http" {
   }
 
   tags = merge(var.tags, { Name = "${var.name}-http" })
+}
+
+resource "kubectl_manifest" "tgb" {
+  yaml_body = <<-YAML
+    apiVersion: elbv2.k8s.aws/v1beta1
+    kind: TargetGroupBinding
+    metadata:
+      name: ${var.name}-pods
+      namespace: ${var.namespace}
+    spec:
+      serviceRef:
+        name: ${var.service_name}
+        port: ${var.container_port}
+      targetGroupARN: ${aws_lb_target_group.this.arn}
+      targetType: ip
+  YAML
 }
