@@ -1,7 +1,3 @@
-# Workload + Ingress for EKS Auto Mode with IP-mode ALB targeting.
-# The AWS Load Balancer Controller is built into Auto Mode — no separate
-# installation needed. The Service uses ClusterIP; the controller registers
-# pod IPs directly with the target group in modules/alb.
 
 resource "kubernetes_namespace_v1" "this" {
   count = var.create ? 1 : 0
@@ -78,7 +74,6 @@ resource "kubernetes_deployment_v1" "this" {
   }
 }
 
-# ✅ ClusterIP — ALB controller registers pod IPs directly, NodePort not needed
 resource "kubernetes_service_v1" "this" {
   count = var.create ? 1 : 0
 

@@ -46,7 +46,6 @@ resource "aws_lb" "this" {
   tags = merge(var.tags, { Name = "${var.name}-int" })
 }
 
-# ✅ renamed from "nodes" to "this" — matches listener reference
 resource "aws_lb_target_group" "this" {
   name        = "inaeks"
   port        = var.container_port

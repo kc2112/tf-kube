@@ -99,8 +99,6 @@ resource "aws_api_gateway_method" "proxy" {
   }
 }
 
-# VPC Link v2 private integration: connection_id is the v2 link,
-# integration_target is the ALB ARN, uri sets the Host header.
 resource "aws_api_gateway_integration" "root" {
   rest_api_id             = aws_api_gateway_rest_api.this.id
   resource_id             = aws_api_gateway_rest_api.this.root_resource_id

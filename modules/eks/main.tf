@@ -246,10 +246,6 @@ resource "aws_iam_role" "cloudwatch_agent" {
   })
 }
 
-
-
-
-
 resource "aws_iam_role_policy_attachment" "cloudwatch_agent_policy" {
   role       = aws_iam_role.cloudwatch_agent.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
@@ -266,11 +262,6 @@ resource "aws_eks_access_policy_association" "kurt_iam_admin" {
 
   depends_on = [aws_eks_cluster.this]
 }
-
-# ── Pod Identity ───────────────────────────────────────────────────────────────
-
-# ✅ REMOVED aws_eks_addon "pod_identity" — built into Auto Mode, and
-#    depended on aws_eks_node_group.this which no longer exists
 
 resource "aws_iam_role" "pod_identity" {
   name = "${var.name}-pod-identity"
@@ -301,8 +292,6 @@ resource "aws_eks_pod_identity_association" "app" {
 
   depends_on = [aws_eks_cluster.this]   # ✅ no longer depends on deleted add-on
 }
-
-# ── OIDC Provider ──────────────────────────────────────────────────────────────
 
 resource "aws_iam_openid_connect_provider" "eks" {
   url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
